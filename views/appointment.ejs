@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PPM Schedule: UGEM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+  <style>
+    .containers {
+      background-color: LightSeaGreen;
+    }
+
+    .btns {
+      background-color: LightSeaGreen;
+      border: 1px solid rgb(0, 255, 64);
+    }
+
+    .thank {
+      display: none;
+    }
+
+    .show {
+      display: block;
+      opacity: 0;
+      transition: opacity 0.5s ease-in;
+    }
+/* html, body {
+  height: 100%;
+  margin: 0;
+} */
+
+.contain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.text {
+  text-align: center;
+}
+
+.contain {
+  display: none;
+}
+  </style>
+
+</head>
+
+<body>
+  <div class="container contain thank bg-info">
+    <img src="/img/thank.gif" alt="">
+  </div>
+
+  <div class="container containers rounded">
+    <div class="text-white text-center"> <span class="mt-5">PPM Schedule</span></div>
+    <form id="myForm">
+      <!-- <label for="date">Date:</label>
+      <input type="date" class="form-control" id="date" name="date" value="10-05-24"><br> -->
+      <label for="time">Tower:</label>
+      <input type="text" class="form-control" id="tower" name="tower" value="B"><br>
+
+      <label for="time">FlatNo:</label>
+      <input type="text" class="form-control" id="flatNo" name="flatNo" value="1102"><br>
+
+      <label for="time">Date:</label>
+      <input type="text" class="form-control" id="time" name="date" value="19-05-23"><br>
+      <label for="time">Time:</label>
+      <input type="text" class="form-control" id="time" name="time" value="10.30 am"><br>
+
+      <label for="time">Agreed</label>
+      <input class="form-check-inputl" type="checkbox">
+
+      <label for="time">Denied</label>
+      <input class="form-check-inputl" type="checkbox">
+
+      <div class="text-center">
+        <button class="btn btn-warning btns mb-2 text-white" type="submit">Schedule</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+    crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- <script src="/js/script.js"></script> -->
+  <script>
+
+    // Establish socket connection
+    const socket = io();
+    const appointment = io('http://localhost:3000/appointment');
+
+    // Capture form submit event
+    const form = document.getElementById('myForm');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      // Get form data
+      const formData = new FormData(form);
+      const data = {
+        date: formData.get('date'),
+        time: formData.get('time'),
+        flatNo: formData.get('flatNo'),
+        tower: formData.get('tower'),
+      };
+
+      // Emit socket event with the form data
+      appointment.emit('formData', data);
+
+      // setTimeout(() => {
+      const forma = document.querySelector('.containers')
+      forma.style.display = 'none'
+      const thanks = document.querySelector('.contain');
+      thanks.style.display = 'block';
+      // thanks.classList.remove('contain')
+        // form.reset();
+      // }, 2000)
+    });
+  </script>
+</body>
+
+</html>
