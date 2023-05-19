@@ -100,14 +100,14 @@
 // }
 
 socket.on('changeEvent', (recentPPM) => {
-  new Audio('/sound/noti.mp3').play()
-      const newPPM = document.getElementById('ppmSchedule')
-      newPPM.innerHTML += `<div class="row mt-1 p-2 fade-in text-white">
-        <div class="col"> ${recentPPM.fullDocument.tower}</div>
-        <div class="col"> ${recentPPM.fullDocument.flatNo}</div>
-        <div class="col"> ${recentPPM.fullDocument.date}</div>
-        <div class="col"> ${recentPPM.fullDocument.time}</div>
-        </div>`
+  const newPPM = document.getElementById('ppmSchedule')
+  newPPM.innerHTML += `<div class="row mt-1 p-2 fade-in text-white">
+    <div class="col"> ${recentPPM.fullDocument.tower}</div>
+    <div class="col"> ${recentPPM.fullDocument.flatNo}</div>
+    <div class="col"> ${recentPPM.fullDocument.date}</div>
+    <div class="col"> ${recentPPM.fullDocument.time}</div>
+    </div>`
+    new Audio('/sound/noti.mp3').play()
   });
  
   </script>

@@ -52,7 +52,7 @@ io.of("/appointment").on("connection", (socket) => {
 });
 // Read the WAV file
 // const file = fs.readFileSync("./public/sound/noti.wav");
-
+ 
 
 
 // Function to monitor database changes
