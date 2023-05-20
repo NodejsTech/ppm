@@ -39,7 +39,7 @@ const io = socket(expressServer, {
 });
 // Socket.io connection
 io.of("/appointment").on("connection", (socket) => {
-  console.log("A client connected.", socket.id);
+  console.log("A client connected......", socket.id);
 
   // Listen for the 'formData' event
   socket.on("formData", async (data) => {
@@ -50,7 +50,7 @@ io.of("/appointment").on("connection", (socket) => {
     }
   });
 });
-// Read the WAV file
+// Read the WAV file 
 // const file = fs.readFileSync("./public/sound/noti.wav");
  
 
@@ -75,7 +75,7 @@ monitorDatabaseChanges();
 
 // Socket.IO event handling
 io.on("connection", (socket) => {
-  console.log("A client connected");
+  console.log("A client connected mobile", socket.id );
 
   // Handle client disconnection
   // socket.on('disconnect', () => {
@@ -99,42 +99,17 @@ app.get("/appointment", (req, res) => {
 });
 
 // submitting the appointments to ugem
-app.post("/appointments", async (req, res) => {
-  try {
-    const { date, time, name } = req.body;
-    const appointment = new Appointment({ date, time, name });
-    await appointment.save();
-    res.redirect("/appointment");
-  } catch (err) {
-    console.error("Error creating appointment", err);
-    res.status(500).send("Internal Server Error");
-  }
-});
+// app.post("/appointments", async (req, res) => {
+//   try {
+//     const { date, time, name } = req.body;
+//     const appointment = new Appointment({ date, time, name });
+//     await appointment.save();
+//     res.redirect("/appointment");
+//   } catch (err) {
+//     console.error("Error creating appointment", err);
+//     res.status(500).send("Internal Server Error");
+//   }
+// });
 
-// const { MongoClient } = require("mongodb");
 
-// const uri = "mongodb://localhost:27017"; // Your MongoDB connection URI
-// const client = new MongoClient(uri);
 
-// async function watchDatabaseChanges() {
-//   await client.connect();
-//   console.log("Connected to MongoDB");
-
-//   const db = client.db("yourDatabaseName"); // Your database name
-//   const collection = db.collection("yourCollectionName"); // Your collection name
-
-//   const changeStream = collection.watch();
-
-//   changeStream.on("change", (change) => {
-//     console.log("Change event:", change);
-
-//     // Process the change event and access the updated document
-//     const updatedDocument = change.fullDocument;
-//     console.log("Updated document:", updatedDocument);
-
-//     // Perform any specific actions with the updated document
-//     // For example, send a notification or update UI
-//   });
-// }
-
-// watchDatabaseChanges().catch(console.error);
