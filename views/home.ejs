@@ -99,9 +99,16 @@
 //     element.dispatchEvent(clickEvent);
 //   }
 // }
+function autoScroll() {
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+// Call the autoScroll function periodically (every 1000 milliseconds or 1 second)
+// setInterval(autoScroll, 1000);
 
 socket.on('changeEvent', (recentPPM) => {
   const newPPM = document.getElementById('ppmSchedule')
+  
   newPPM.innerHTML += `<div class="row mt-1 p-2 fade-in text-white">
     <div class="col"> ${recentPPM.fullDocument.tower}</div>
     <div class="col"> ${recentPPM.fullDocument.flatNo}</div>
@@ -109,8 +116,9 @@ socket.on('changeEvent', (recentPPM) => {
     <div class="col"> ${recentPPM.fullDocument.time}</div>
     </div>`
     new Audio('/sound/noti.mp3').play()
+    autoScroll()
   });
- 
+
   </script>
 </body>
 
