@@ -40,7 +40,7 @@ const io = socket(expressServer, {
   },
 });
 // Socket.io connection
-io.of("/arsupport.online/appointment").on("connection", (socket) => {
+io.of("/appointment").on("connection", (socket) => {
   console.log("A client connected......", socket.id);
 
   // Listen for the 'formData' event
