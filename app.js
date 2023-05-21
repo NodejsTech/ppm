@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const morgan = require("morgan");
 const ejs = require("ejs");
 const app = express();
 const port = 3000;
@@ -17,6 +18,7 @@ db();
 
 const Appointment = require("./models/appoinment.model");
 
+app.use(morgan('dev'))
 app.use(express.static(__dirname + "/public"));
 
 // Set up EJS as the view engine
@@ -38,7 +40,7 @@ const io = socket(expressServer, {
   },
 });
 // Socket.io connection
-io.of("/appointment").on("connection", (socket) => {
+io.of("http://arsupport.online/appointment").on("connection", (socket) => {
   console.log("A client connected......", socket.id);
 
   // Listen for the 'formData' event
