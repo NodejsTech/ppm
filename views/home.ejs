@@ -9,7 +9,6 @@
     integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 
   <style>
-   
     .fade-in {
       background-color: rgb(179, 12, 62);
       opacity: 0;
@@ -33,7 +32,6 @@
 <body>
   <div class="container bg-info" id="myElement">
 
-
     <h1 class="text-center">All PPM SCHEDULE</h1>
     <a href="/appointment" class="btn btn-warning">Make PPM Scehdule</a>
 
@@ -52,6 +50,9 @@
         <div class="col">
           Time
         </div>
+        <div class="col">
+          Activity
+        </div>
       </div>
       <% appointments.forEach(element=> { %>
         <div class="row mt-1 p-2 bg-secondary text-white">
@@ -67,6 +68,10 @@
           <div class="col">
             <%= element.time %>
           </div>
+
+          <div class="col">
+            <button class="btn btn-danger">Delete</button>
+          </div>
         </div>
         <% }); %>
 
@@ -79,45 +84,50 @@
     integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
     crossorigin="anonymous"></script>
   <script src="/socket.io/socket.io.js"></script>
-  <!-- <script src="/js/script.js"></script> -->
+
+
   <script>
-    // const socket = io();
+
     const socket = io('http://arsupport.online/');
 
-    // document.getElementById("myElement").addEventListener('click', ()=> {
-    // })
-    // function createMouseClick(elementId) {
-//   const element = document.getElementById(elementId);
+    // Handle delete button click
+    function deleteItem(itemId) {
+      socket.emit('delete', itemId);
+    }
 
-//   if (element) {
-//     const clickEvent = new MouseEvent("click", {
-//       bubbles: true,
-//       cancelable: true,
-//       view: window
-//     });
-//     console.log('Clicke')
-//     element.dispatchEvent(clickEvent);
-//   }
-// }
-function autoScroll() {
-  window.scrollTo(0, document.body.scrollHeight);
-}
 
-// Call the autoScroll function periodically (every 1000 milliseconds or 1 second)
-// setInterval(autoScroll, 1000);
+    // Handle delete confirmation from the server
 
-socket.on('changeEvent', (recentPPM) => {
-  const newPPM = document.getElementById('ppmSchedule')
-  
-  newPPM.innerHTML += `<div class="row mt-1 p-2 fade-in text-white">
+    socket.on('deleteconfirmation', (itemId) => {
+      // Remove the deleted item from the list
+      const listItem = document.getElementById(itemId)
+      if (listItem) {
+        listItem.remove()
+      }
+    })
+
+
+
+
+
+
+
+
+    function autoScroll() {
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+    socket.on('changeEvent', (recentPPM) => {
+      const newPPM = document.getElementById('ppmSchedule')
+
+      newPPM.innerHTML += `<div class="row mt-1 p-2 fade-in text-white">
     <div class="col"> ${recentPPM.fullDocument.tower}</div>
     <div class="col"> ${recentPPM.fullDocument.flatNo}</div>
     <div class="col"> ${recentPPM.fullDocument.date}</div>
     <div class="col"> ${recentPPM.fullDocument.time}</div>
     </div>`
-    new Audio('/sound/noti.mp3').play()
-    autoScroll()
-  });
+      new Audio('/sound/noti.mp3').play()
+      autoScroll()
+    });
 
   </script>
 </body>

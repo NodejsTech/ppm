@@ -52,8 +52,21 @@ io.of("/appointment").on("connection", (socket) => {
     }
   });
 });
-// Read the WAV file 
-// const file = fs.readFileSync("./public/sound/noti.wav");
+
+// Socket.io connection handling
+io.on('connection', (socket) => {
+  // Handle delete event
+  socket.on('delete', (itemId) => {
+    // Implement your delete logic here
+    // itemId contains the ID of the item to be deleted
+
+    
+
+    // Emit a confirmation event to all connected clients
+    io.emit('deleteConfirmation', itemId);
+  });
+});
+
  
 
 
