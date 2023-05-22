@@ -39,6 +39,23 @@ const io = socket(expressServer, {
     credentials: true, // Allow credentials (e.g., cookies)
   },
 });
+
+
+io.on('connection', (socket) => {
+  console.log('Client Connection established')
+  socket.emit('messageFromServer', { data: 'Socket io server is rinning' });
+
+  socket.on('delete', async(id) => {
+    await Appointment.findByIdAndDelete(id)
+    console.log(id, '---------delete')
+    io.emit('deleteRow', id)
+  })
+})
+ 
+
+
+
+
 // Socket.io connection
 io.of("/appointment").on("connection", (socket) => {
   console.log("A client connected......", socket.id);
@@ -51,22 +68,7 @@ io.of("/appointment").on("connection", (socket) => {
       console.error("Error inserting form data:", error);
     }
   });
-});
-
-// Socket.io connection handling
-io.on('connection', (socket) => {
-  // Handle delete event
-  socket.on('delete', (itemId) => {
-    // Implement your delete logic here
-    // itemId contains the ID of the item to be deleted
-
-    
-
-    // Emit a confirmation event to all connected clients
-    io.emit('deleteConfirmation', itemId);
-  });
-});
-
+});  
  
 
 
@@ -76,10 +78,12 @@ function monitorDatabaseChanges() {
     const changeStream = Appointment.watch();
     // Listen for change events
     changeStream.on("change", (change) => {
-      console.log("Change event:", change);
-      // Play notification sound
-      // Play the audio file
-      io.emit("changeEvent", change);
+      if (change.operationType === 'insert') {
+        console.log("Change event:", change);
+        io.emit("changeEvent", change);
+      } {
+        console.log('Data deleted');
+      }
     });
   } catch (error) {
     console.error("An error occurred:", error);
@@ -88,15 +92,27 @@ function monitorDatabaseChanges() {
 
 monitorDatabaseChanges();
 
-// Socket.IO event handling
-io.on("connection", (socket) => {
-  console.log("A client connected mobile", socket.id );
+// function deletedataandmonitorchanges() {
+  
+// } 
+// deletedataandmonitorchanges () 
 
-  // Handle client disconnection
-  // socket.on('disconnect', () => {
-  //   console.log('A client disconnected');
-  // });
-});
+// Socket.IO event handling
+// io.on("connection", (socket) => {
+
+//   console.log("A client connected mobile", socket.id);
+
+//   socket.on('delete', async(itemId) => {
+//     await Appointment.findByIdAndDelete(itemId)
+//     const changeStream = Appointment.watch();
+//     changeStream.on('change', (change) => { 
+//     console.log("chang0----------e",change)
+//       io.emit('deleteConfirmation', itemId);
+//     })
+//   });
+// });
+
+
 
 app.get("/", async (req, res) => {
   try {
@@ -113,18 +129,6 @@ app.get("/appointment", (req, res) => {
   res.render("appointment");
 });
 
-// submitting the appointments to ugem
-// app.post("/appointments", async (req, res) => {
-//   try {
-//     const { date, time, name } = req.body;
-//     const appointment = new Appointment({ date, time, name });
-//     await appointment.save();
-//     res.redirect("/appointment");
-//   } catch (err) {
-//     console.error("Error creating appointment", err);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
 
 
 

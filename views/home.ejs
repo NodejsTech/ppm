@@ -9,13 +9,23 @@
     integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 
   <style>
-    .fade-in {
-      background-color: rgb(179, 12, 62);
-      opacity: 0;
-      animation: fade-in 2s forwards;
-    }
+.red-bg {
+  background-color: rgb(182, 18, 18);
+  transition: background-color 0.5s ease;
+}
 
-    @keyframes fade-in {
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.fade-in {
+  background-color: rgb(179, 12, 62);
+  opacity: 0;
+  animation: fade-in 2s forwards;
+}
+
+@keyframes fade-in {
       from {
         opacity: 0;
       }
@@ -26,7 +36,6 @@
     }
   </style>
 
-
 </head>
 
 <body>
@@ -36,7 +45,7 @@
     <a href="/appointment" class="btn btn-warning">Make PPM Scehdule</a>
 
     <div id="ppmSchedule">
-      <div class="row mt-1 p-2 bg-warning text-success">
+      <div class="row mt-1 p-2 bg-warning text-success sticky-top">
         <div class="col">
           Tower
         </div>
@@ -55,7 +64,9 @@
         </div>
       </div>
       <% appointments.forEach(element=> { %>
-        <div class="row mt-1 p-2 bg-secondary text-white">
+
+
+        <div class="row mt-1 p-2 bg-secondary text-white my-div" id="<%= element.id %>">
           <div class="col">
             <%= element.tower %>
           </div>
@@ -70,9 +81,12 @@
           </div>
 
           <div class="col">
-            <button class="btn btn-danger">Delete</button>
+            <button class="btn btn-danger delete-button" onclick='deleteItem("<%= element.id %>")'>Delete</button>
           </div>
         </div>
+
+
+
         <% }); %>
 
           <!-- Heere will be dynamic data push on -->
@@ -84,21 +98,28 @@
     integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
     crossorigin="anonymous"></script>
   <script src="/socket.io/socket.io.js"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 
   <script>
 
-    const socket = io('https://arsupport.online/');
+    const socket = io();
+    // const socket = io('https://arsupport.online/');
+
+    socket.on('messageFromServer', (data) => {
+      console.log(data)
+    })
 
     // Handle delete button click
     function deleteItem(itemId) {
+
       socket.emit('delete', itemId);
     }
 
 
-    // Handle delete confirmation from the server
+    // // Handle delete confirmation from the server
 
-    socket.on('deleteconfirmation', (itemId) => {
+    socket.on('deleteRow', (itemId) => {
+      console.log('front-end', itemId)
       // Remove the deleted item from the list
       const listItem = document.getElementById(itemId)
       if (listItem) {
@@ -108,27 +129,37 @@
 
 
 
-
-
-
-
-
-    function autoScroll() {
-      window.scrollTo(0, document.body.scrollHeight);
-    }
+    // function autoScroll() {
+    //   window.scrollTo(0, document.body.scrollHeight);
+    // }
     socket.on('changeEvent', (recentPPM) => {
+      console.log(recentPPM)
       const newPPM = document.getElementById('ppmSchedule')
-
-      newPPM.innerHTML += `<div class="row mt-1 p-2 fade-in text-white">
+      newPPM.innerHTML += `<div class="row mt-1 p-2 fade-in text-white" id="${recentPPM.fullDocument._id}">
     <div class="col"> ${recentPPM.fullDocument.tower}</div>
     <div class="col"> ${recentPPM.fullDocument.flatNo}</div>
     <div class="col"> ${recentPPM.fullDocument.date}</div>
     <div class="col"> ${recentPPM.fullDocument.time}</div>
+    <div class="col"> <button class="btn btn-danger delete-button" onclick='deleteItem("${recentPPM.fullDocument._id}")'>Delete</button></div>
     </div>`
       new Audio('/sound/noti.mp3').play()
-      autoScroll()
+      window.scrollTo(0, document.body.scrollHeight);
     });
 
+
+    $(document).ready(function() {
+  $('.delete-button').click(function() {
+    var div = $(this).closest('.my-div');
+    div.removeClass('bg-secondary')
+    // Apply red background color
+    div.addClass('red-bg');
+
+    // Fade out slowly and remove the div
+    div.fadeOut(1000, function() {
+      $(this).remove();
+    });
+  });
+})
   </script>
 </body>
 
